@@ -16,11 +16,28 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 add_compile_options("--coverage")
-add_executable(
-  cleancode
-  typewise-alert.cpp
-  typewise-alert.tests.cpp
+
+# Verify that the source files exist before adding them to the executable
+set(SOURCE_FILES
+    cooling_config.cpp
+    breach_detector.cpp
+    alert_checker.cpp
+    alert_to_controller.cpp
+    AlertInEmail.cpp
+    typewise-alert.tests.cpp
 )
+
+# Check if each source file exists
+foreach(SOURCE ${SOURCE_FILES})
+  if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${SOURCE}")
+    message(FATAL_ERROR "Cannot find source file: ${SOURCE}")
+  endif()
+endforeach()
+
+# Define the executable only if all sources are found
+add_executable(cleancode ${SOURCE_FILES})
+
+# Link libraries
 target_link_libraries(
   cleancode
   GTest::gmock_main
